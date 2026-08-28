@@ -53,7 +53,7 @@ export function ContactForm() {
 
     // TODO: wire this up to a real email service (e.g. Resend, EmailJS)
     // or a FastAPI endpoint once one is deployed. This form is validated
-    // client-side only and does not currently send anything.
+    // client-side only and does not currently send anything .
   }
 
   const inputClasses =
