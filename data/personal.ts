@@ -12,9 +12,9 @@ export const personal = {
   academicProgress: "3rd year, 2nd semester completed",
 
   // Replace with your real contact details
-  email: "YOUR_EMAIL",
-  github: "YOUR_GITHUB_URL",
-  linkedin: "YOUR_LINKEDIN_URL",
+  email: "natuhin02@gmail.com",
+  github: "https://github.com/tuhinXtg",
+  linkedin: "https://www.linkedin.com/in/nazmul-alam-aa3a32405/",
 
   // Drop your PDF resume at this exact path in /public
   resumePath: "/resume/Nazmul-Alam-Resume.pdf",
