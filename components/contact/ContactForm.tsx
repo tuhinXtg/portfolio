@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
 
 type FormState = {
@@ -8,6 +8,8 @@ type FormState = {
   email: string;
   subject: string;
   message: string;
+  website: string;
+  submittedAt: string;
 };
 
 type FormErrors = Partial<Record<keyof FormState, string>>;
@@ -17,7 +19,16 @@ const initialState: FormState = {
   email: "",
   subject: "",
   message: "",
+  website: "",
+  submittedAt: "",
 };
+
+function createInitialState(): FormState {
+  return {
+    ...initialState,
+    submittedAt: String(Date.now()),
+  };
+}
 
 function validate(values: FormState): FormErrors {
   const errors: FormErrors = {};
@@ -37,23 +48,75 @@ function validate(values: FormState): FormErrors {
 }
 
 export function ContactForm() {
-  const [values, setValues] = useState<FormState>(initialState);
+  const [values, setValues] = useState<FormState>(() => createInitialState());
   const [errors, setErrors] = useState<FormErrors>({});
-  const [validated, setValidated] = useState(false);
+  const [status, setStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [statusMessage, setStatusMessage] = useState("");
 
   function handleChange(field: keyof FormState, value: string) {
-    setValues((v) => ({ ...v, [field]: value }));
+    setValues((current) => ({ ...current, [field]: value }));
+    if (status === "success" || status === "error") {
+      setStatus("idle");
+      setStatusMessage("");
+    }
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
     const nextErrors = validate(values);
     setErrors(nextErrors);
-    setValidated(Object.keys(nextErrors).length === 0);
+    if (Object.keys(nextErrors).length > 0) {
+      return;
+    }
 
-    // TODO: wire this up to a real email service (e.g. Resend, EmailJS)
-    // or a FastAPI endpoint once one is deployed. This form is validated
-    // client-side only and does not currently send anything .
+    if (values.website.trim()) {
+      setStatus("success");
+      setStatusMessage("Message sent successfully.");
+      setValues(createInitialState());
+      return;
+    }
+
+    if (Date.now() - Number(values.submittedAt) < 3000) {
+      setStatus("error");
+      setStatusMessage("Please take a moment before sending this form.");
+      return;
+    }
+
+    setStatus("submitting");
+    setStatusMessage("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      const data = (await response.json().catch(() => null)) as
+        | { message?: string }
+        | null;
+
+      if (!response.ok) {
+        throw new Error(data?.message ?? "Unable to send message.");
+      }
+
+      setValues(createInitialState());
+      setErrors({});
+      setStatus("success");
+      setStatusMessage(data?.message ?? "Message sent successfully.");
+    } catch (error) {
+      setStatus("error");
+      setStatusMessage(
+        error instanceof Error
+          ? error.message
+          : "We could not send your message right now.",
+      );
+    }
   }
 
   const inputClasses =
@@ -61,16 +124,34 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-5">
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        value={values.website}
+        onChange={(e) => handleChange("website", e.target.value)}
+        aria-hidden="true"
+        className="sr-only"
+      />
+      <input
+        type="hidden"
+        name="submittedAt"
+        value={values.submittedAt}
+        readOnly
+      />
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className="mb-1.5 block text-sm text-muted">
-            Nameee
+            Name
           </label>
           <input
             id="name"
             type="text"
             value={values.name}
             onChange={(e) => handleChange("name", e.target.value)}
+            maxLength={100}
+            autoComplete="name"
             className={inputClasses}
             aria-invalid={!!errors.name}
             aria-describedby={errors.name ? "name-error" : undefined}
@@ -91,6 +172,8 @@ export function ContactForm() {
             type="email"
             value={values.email}
             onChange={(e) => handleChange("email", e.target.value)}
+            maxLength={254}
+            autoComplete="email"
             className={inputClasses}
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? "email-error" : undefined}
@@ -112,6 +195,8 @@ export function ContactForm() {
           type="text"
           value={values.subject}
           onChange={(e) => handleChange("subject", e.target.value)}
+          maxLength={150}
+          autoComplete="off"
           className={inputClasses}
           aria-invalid={!!errors.subject}
           aria-describedby={errors.subject ? "subject-error" : undefined}
@@ -132,6 +217,8 @@ export function ContactForm() {
           rows={5}
           value={values.message}
           onChange={(e) => handleChange("message", e.target.value)}
+          maxLength={5000}
+          autoComplete="off"
           className={inputClasses}
           aria-invalid={!!errors.message}
           aria-describedby={errors.message ? "message-error" : undefined}
@@ -144,13 +231,24 @@ export function ContactForm() {
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <Button type="submit" disabled={validated} className="sm:w-auto">
-          Send Message
+        <Button
+          type="submit"
+          disabled={status === "submitting"}
+          className="sm:w-auto"
+        >
+          {status === "submitting" ? "Sending..." : "Send Message"}
         </Button>
-        <p className="text-xs text-subtle">
-          {validated
-            ? "Form validated — email sending isn't connected yet."
-            : "This form is not yet connected to an email service."}
+        <p
+          aria-live="polite"
+          className={`text-xs ${
+            status === "error"
+              ? "text-danger"
+              : status === "success"
+                ? "text-accent"
+                : "text-subtle"
+          }`}
+        >
+          {statusMessage || "Messages are sent through the configured email service."}
         </p>
       </div>
     </form>
