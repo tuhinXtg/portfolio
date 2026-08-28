@@ -64,7 +64,7 @@ export function ContactForm() {
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className="mb-1.5 block text-sm text-muted">
-            Name
+            Nameee
           </label>
           <input
             id="name"
