@@ -50,11 +50,11 @@ export const featuredProject: Project = {
     { label: "Database schema & migrations", status: "done" },
     { label: "Frontend / backend integration", status: "done" },
     { label: "Authentication & authorization", status: "planned" },
-    { label: "Cart & checkout workflow", status: "planned" },
+    { label: "Cart & checkout workflow", status: "done" },
     { label: "Order management", status: "planned" },
     { label: "Admin dashboard", status: "planned" },
   ],
-  githubUrl: "YOUR_GITHUB_URL",
+  githubUrl: "https://github.com/tuhinXtg/Scentora",
   liveUrl: null,
   image: "/projects/scentora.jpg",
 };
@@ -75,36 +75,36 @@ export const otherProjects: Project[] = [
     features: [
       { label: "ADD_PROJECT_FEATURE", status: "planned" },
     ],
-    githubUrl: "YOUR_GITHUB_URL",
-    liveUrl: null,
+    githubUrl: "https://github.com/tuhinXtg/Student_Assignment_Tracker",
+    liveUrl: "https://student-assignment-tracker-d2i8rfu97-cs-go2.vercel.app/login",
     image: "/projects/assignment-tracker.jpg",
   },
-  {
-    slug: "react-frontend-project",
-    name: "ADD_PROJECT_NAME",
-    tagline: "React / Vite frontend project",
-    description:
-      "ADD_PROJECT_DESCRIPTION — a React project demonstrating component-based development, API integration, and responsive UI.",
-    featured: false,
-    techLayers: [{ layer: "Frontend", items: ["React", "Vite"] }],
-    features: [{ label: "ADD_PROJECT_FEATURE", status: "planned" }],
-    githubUrl: "YOUR_GITHUB_URL",
-    liveUrl: null,
-    image: "/projects/react-project.jpg",
-  },
-  {
-    slug: "backend-api-project",
-    name: "ADD_PROJECT_NAME",
-    tagline: "Backend REST API project",
-    description:
-      "ADD_PROJECT_DESCRIPTION — a FastAPI-based backend project demonstrating CRUD operations, validation, and database integration.",
-    featured: false,
-    techLayers: [{ layer: "Backend", items: ["FastAPI", "Python"] }],
-    features: [{ label: "ADD_PROJECT_FEATURE", status: "planned" }],
-    githubUrl: "YOUR_GITHUB_URL",
-    liveUrl: null,
-    image: "/projects/backend-api-project.jpg",
-  },
+//   {
+//     slug: "react-frontend-project",
+//     name: "ADD_PROJECT_NAME",
+//     tagline: "React / Vite frontend project",
+//     description:
+//       "ADD_PROJECT_DESCRIPTION — a React project demonstrating component-based development, API integration, and responsive UI.",
+//     featured: false,
+//     techLayers: [{ layer: "Frontend", items: ["React", "Vite"] }],
+//     features: [{ label: "ADD_PROJECT_FEATURE", status: "planned" }],
+//     githubUrl: "YOUR_GITHUB_URL",
+//     liveUrl: null,
+//     image: "/projects/react-project.jpg",
+//   },
+//   {
+//     slug: "backend-api-project",
+//     name: "ADD_PROJECT_NAME",
+//     tagline: "Backend REST API project",
+//     description:
+//       "ADD_PROJECT_DESCRIPTION — a FastAPI-based backend project demonstrating CRUD operations, validation, and database integration.",
+//     featured: false,
+//     techLayers: [{ layer: "Backend", items: ["FastAPI", "Python"] }],
+//     features: [{ label: "ADD_PROJECT_FEATURE", status: "planned" }],
+//     githubUrl: "YOUR_GITHUB_URL",
+//     liveUrl: null,
+//     image: "/projects/backend-api-project.jpg",
+//   },
 ];
 
 export const allProjects: Project[] = [featuredProject, ...otherProjects];
